@@ -1,42 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { ethers } from 'ethers';
+import '@rainbow-me/rainbowkit/styles.css';
+import { ConnectButton, getDefaultWallets, RainbowKitProvider, } from '@rainbow-me/rainbowkit';
+import { configureChains, createConfig, WagmiConfig } from 'wagmi';
+import { mainnet, } from 'wagmi/chains';
+import { publicProvider } from 'wagmi/providers/public';
+
+const { chains, publicClient } = configureChains(
+  [mainnet],
+  [publicProvider()]
+);
+const { connectors } = getDefaultWallets({
+  appName: 'Web3 App',
+  projectId: 'YOUR_PROJECT_ID',
+  chains
+});
+const wagmiConfig = createConfig({
+  autoConnect: true,
+  connectors,
+  publicClient
+})
 
 function App() {
-  const [blockNumber, setBlockNumber] = useState<number | null>(null);
-
-  useEffect(() => {
-    const fetchBlockNumber = async () => {
-      try {
-        const provider = ethers.getDefaultProvider('mainnet');
-        const currentBlockNumber = await provider.getBlockNumber();
-        setBlockNumber(currentBlockNumber);
-      } catch (error) {
-        console.error('Error fetching block number:', error);
-      }
-    };
-
-    fetchBlockNumber();
-  }, []);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          {blockNumber}
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <WagmiConfig config={wagmiConfig}>
+      <RainbowKitProvider chains={chains}>
+        <div className="App">
+          <header className="App-header">
+            <ConnectButton />
+          </header>
+        </div>
+      </RainbowKitProvider>
+    </WagmiConfig>
   );
 }
 
