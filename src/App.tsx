@@ -1,12 +1,12 @@
 import './App.css';
 import '@rainbow-me/rainbowkit/styles.css';
 import { ConnectButton, getDefaultWallets, RainbowKitProvider, } from '@rainbow-me/rainbowkit';
-import { configureChains, createConfig, WagmiConfig } from 'wagmi';
+import { configureChains, createConfig, sepolia, WagmiConfig } from 'wagmi';
 import { mainnet, } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 
 const { chains, publicClient } = configureChains(
-  [mainnet],
+  [mainnet, sepolia],
   [publicProvider()]
 );
 const { connectors } = getDefaultWallets({
@@ -24,7 +24,7 @@ function App() {
 
   return (
     <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains}>
+      <RainbowKitProvider chains={chains} modalSize="compact">
         <div className="App">
           <header className="App-header">
             <ConnectButton />
